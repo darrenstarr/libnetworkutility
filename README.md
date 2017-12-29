@@ -11,7 +11,8 @@ Not really a class as opposed to extension methods for System.Net.IPAddress. The
 
 * Simplify converting to and from UInt32 (IPAddress.ToUInt32(), uint32.ToIPAddress())
 * Comparing IP addresses against each other numerically (IPAddress.GreatThan(), IPAddress.LessThan(), etc)
-* Creating hexadecimal strings from addresses (.IPAddress.ToHexString())
+* Creating hexadecimal strings from addresses (IPAddress.ToHexString())
+* Gets the source IP to use when contacting a destination address (IPAddress.GetSourceIP())
 
 ### IPRange
 
