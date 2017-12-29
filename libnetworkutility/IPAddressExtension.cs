@@ -90,5 +90,10 @@ namespace libnetworkutility
 
             return other;
         }
+
+        public static IPAddress GetSourceIP(this IPAddress me)
+        {
+            return RoutingTable.LocalRoutingTable.QueryRoutingInterface(me);
+        }
     }
 }

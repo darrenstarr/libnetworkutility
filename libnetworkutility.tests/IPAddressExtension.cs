@@ -105,5 +105,18 @@ namespace libnetworkutility.tests
             Assert.Equal(upper, lower.Max(upper));
             Assert.Equal(upper, upper.Max(lower));
         }
+
+        [Fact]
+        public void GetSourceIP()
+        {
+            if(System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+                // TODO : Run scripts/resolveroute.ps1 to find the outgoing interface for 8.8.8.8 and match it to IPAddress.GetSourceIP
+            }
+            else
+            {
+                Console.WriteLine("This platform is not supported for IPAddressExtension.GetSourceIP() unit testing");
+            }
+        }
     }
 }
