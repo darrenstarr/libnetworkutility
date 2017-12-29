@@ -30,6 +30,34 @@ namespace libnetworkutility
             return address.GreaterThanOrEqual(Start) && address.LessThanOrEqual(End);
         }
 
+        public bool Intersects(IPRange range)
+        {
+            return (
+                Contains(range.Start) ||
+                Contains(range.End) ||
+                range.Contains(Start) ||
+                range.Contains(End)
+            );
+        }
+
+        public bool Borders(IPRange range)
+        {
+            return (
+                BordersNext(range) ||
+                BordersPrevious(range)
+            );
+        }
+
+        public bool BordersNext(IPRange range)
+        {
+            return End.Offset(1).Equals(range.Start);
+        }
+
+        public bool BordersPrevious(IPRange range)
+        {
+            return range.BordersNext(this);
+        }
+
         public override string ToString()
         {
             return Start.ToString() + "-" + End.ToString();
@@ -47,6 +75,155 @@ namespace libnetworkutility
         public override int GetHashCode()
         {
             return Start.GetHashCode() ^ End.GetHashCode();
+        }
+
+        public IPRanges Split(IPAddress splitAt)
+        {
+            // Convert the addresses to UInt32
+            var start = Start.ToUInt32();
+            var end = End.ToUInt32();
+            var at = splitAt.ToUInt32();
+
+            if (
+                (end - start) == 1 || 
+                at <= start || 
+                at > end
+                )
+            {
+                return new IPRanges
+                {
+                    new IPRange
+                    {
+                        Start = Start,
+                        End = End
+                    }
+                };
+            }
+
+            return new IPRanges( 
+                new List<IPRange>
+                {
+                    new IPRange
+                    {
+                        Start = Start,
+                        End = (at - 1).ToIPAddress()
+                    },
+                    new IPRange
+                    {
+                        Start = at.ToIPAddress(),
+                        End = End
+                    }
+                },
+                false
+            );
+        }
+
+        public IPRange CombineWith(IPRange other)
+        {
+            if (!Intersects(other) && !Borders(other))
+                throw new ArgumentException("Can't combine two ranges which do not intersect or touch");
+
+            return new IPRange
+            {
+                Start = Start.Min(other.Start),
+                End = End.Max(other.End)
+            };
+        }
+
+        public long Count
+        {
+            get
+            {
+                return Convert.ToInt64(End.ToUInt32()) - Convert.ToInt64(Start.ToUInt32()) + 1;
+            }
+        }
+
+        public IPRanges Subtract(IPRange other)
+        {
+            // If the other range doesn't overlap this range, then just return this range
+            if (!Intersects(other))
+            {
+                return new IPRanges
+                {
+                    this
+                };
+            }
+
+            var start = Start.ToUInt32();
+            var end = End.ToUInt32();
+            var otherStart = other.Start.ToUInt32();
+            var otherEnd = other.End.ToUInt32();
+
+            // If the other range eclipses this range, then return an empty list
+            if (
+                (otherStart <= start) && 
+                (otherEnd >= end)
+            )
+                return new IPRanges();
+
+            // If the other range overlaps the start of this range, then clip the start
+            if (
+                (otherStart <= start) &&
+                (otherEnd >= start)
+            )
+            {
+                return new IPRanges {
+                    new IPRange
+                    {
+                        Start = (otherEnd + 1).ToIPAddress(),
+                        End = End
+                    }
+                };
+            }
+
+            // If the other range overlaps the end of this range, then clip the end
+            if (
+                (otherStart <= end) &&
+                (otherEnd >= end)
+            )
+            {
+                return new IPRanges
+                {
+                    new IPRange
+                    {
+                        Start = Start,
+                        End = (otherStart - 1).ToIPAddress()
+                    }
+                };
+            }
+
+            // If the other range is in the middle of this range, then create two new ranges as a result
+            return new IPRanges
+            {
+                new IPRange
+                {
+                    Start = Start,
+                    End = (otherStart - 1).ToIPAddress()
+                },
+                new IPRange
+                {
+                    Start = (otherEnd + 1).ToIPAddress(),
+                    End = End
+                }
+            };
+        }
+
+        public bool ComesBefore(IPRange other)
+        {
+            return other.Start.GreaterThan(End);
+        }
+
+        public bool ComesAfter(IPRange other)
+        {
+            return Start.GreaterThan(other.End);
+        }
+
+        public bool Eclipses(IPRange other)
+        {
+            return (
+                Start.LessThanOrEqual(other.Start) &&
+                End.GreaterThanOrEqual(other.End)
+            );
         }
     }
 }

@@ -74,5 +74,21 @@ namespace libnetworkutility
                 meInt -= Convert.ToUInt32(Math.Abs(offset));
             return meInt.ToIPAddress();
         }
+
+        public static IPAddress Min(this IPAddress me, IPAddress other)
+        {
+            if (me.LessThanOrEqual(other))
+                return me;
+
+            return other;
+        }
+
+        public static IPAddress Max(this IPAddress me, IPAddress other)
+        {
+            if (me.GreaterThanOrEqual(other))
+                return me;
+
+            return other;
+        }
     }
 }

@@ -85,5 +85,25 @@ namespace libnetworkutility.tests
             Assert.Equal(expectedUp, original.Offset(257));
             Assert.Equal(expectedDown, original.Offset(-3));
         }
+
+        [Fact]
+        public void Min()
+        {
+            var lower = IPAddress.Parse("10.1.1.1");
+            var upper = IPAddress.Parse("192.168.1.255");
+
+            Assert.Equal(lower, lower.Min(upper));
+            Assert.Equal(lower, upper.Min(lower));
+        }
+
+        [Fact]
+        public void Max()
+        {
+            var lower = IPAddress.Parse("10.1.1.1");
+            var upper = IPAddress.Parse("192.168.1.255");
+
+            Assert.Equal(upper, lower.Max(upper));
+            Assert.Equal(upper, upper.Max(lower));
+        }
     }
 }
