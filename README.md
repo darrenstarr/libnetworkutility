@@ -25,3 +25,10 @@ Represents a range of IP addresses from .Start to .End. This class includes
 ### IPRanges
 
 Represents an ordered list of IP ranges. This class normalizes/optimizes Adds and Removes to reduce the number of items in the list.
+
+### IPAddressPool
+
+Represents a pool of IP addresses to handle address allocation for a DHCP server for example. Operations that are supported are :
+
+* Reserve/Unreserve IPAddress,IPRange and IPRanges
+* Reserve next available IP address 
