@@ -285,6 +285,18 @@ namespace libnetworkutility
                 Add(item);
         }
 
+        public IPRanges Clone()
+        {
+            return new IPRanges(this.Select(x => x.Clone()).ToList(), false);
+        }
+
+        public IPRanges Minus(IPRanges ranges)
+        {
+            var result = Clone();
+            result.Remove(ranges);
+            return result;
+        }
+
         public void Add(IPRanges ranges)
         {
             foreach (var item in ranges)

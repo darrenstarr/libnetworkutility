@@ -1684,5 +1684,36 @@ namespace libnetworkutility.tests
             ranges[0].End = IPAddress.Parse("10.1.1.4");
             Assert.Throws<InvalidOperationException>(() => { var x = enumerator.Current; } );
         }
+
+        [Fact]
+        public void Clone()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.3")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.5"),
+                    End = IPAddress.Parse("10.1.1.5")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.7"),
+                    End = IPAddress.Parse("10.1.1.8")
+                }
+            };
+
+            var clone = ranges.Clone();
+
+            Assert.Equal(ranges, clone);
+
+            ranges[0].Start = IPAddress.Parse("10.1.1.0");
+
+            Assert.NotEqual(ranges, clone);
+        }
     }
 }

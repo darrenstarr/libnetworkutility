@@ -310,5 +310,14 @@ namespace libnetworkutility
 
             return -1;
         }
+
+        public IPRange Clone()
+        {
+            return new IPRange
+            {
+                Start = Start,
+                End = End
+            };
+        }
     }
 }
