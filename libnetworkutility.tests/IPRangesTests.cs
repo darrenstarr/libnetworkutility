@@ -6,7 +6,7 @@ using Xunit;
 
 namespace libnetworkutility.tests
 {
-    public class IPRanges
+    public class IPRangesTests
     {
         [Fact]
         public void ConstructorNormalizeList()
@@ -1194,6 +1194,495 @@ namespace libnetworkutility.tests
             ranges.Remove(toAdd);
 
             Assert.Equal(good, ranges);
+        }
+
+        [Fact]
+        public void EqualsDifferentCount()
+        {
+            var a = new IPRanges(
+                new List<IPRange> {
+                    new IPRange
+                    {
+                        Start = IPAddress.Parse("10.1.1.1"),
+                        End = IPAddress.Parse("10.1.1.10")
+                    },
+                    new IPRange
+                    {
+                        Start = IPAddress.Parse("10.1.1.50"),
+                        End = IPAddress.Parse("10.1.1.100")
+                    },
+                    new IPRange
+                    {
+                        Start = IPAddress.Parse("10.1.1.101"),
+                        End = IPAddress.Parse("10.1.1.200")
+                    },
+                    new IPRange
+                    {
+                        Start = IPAddress.Parse("10.1.1.210"),
+                        End = IPAddress.Parse("10.1.1.255")
+                    }
+                },
+                false
+            );
+
+            var b = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.200")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            Assert.False(a.Equals(b));
+        }
+
+        [Fact]
+        public void EqualsDifferentRange()
+        {
+            var a = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.201")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            var b = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.200")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            Assert.False(a.Equals(b));
+        }
+
+        [Fact]
+        public void EqualsDifferentType()
+        {
+            var a = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.201")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            var b = new List<IPRange>
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.200")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            Assert.False(a.Equals(b));
+        }
+
+        [Fact]
+        public void ToStringNice()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.201")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            Assert.Equal("10.1.1.1-10.1.1.10,10.1.1.50-10.1.1.201,10.1.1.210-10.1.1.255", ranges.ToString());
+        }
+
+        [Fact]
+        public void HashCode()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.201")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            int hash = 0x55555555;        // Seed the result
+
+            foreach (var range in ranges)
+                hash ^= range.GetHashCode();
+
+            Assert.Equal(hash, ranges.GetHashCode());
+        }
+
+        [Fact]
+        public void CompareToEqual()
+        {
+            var a = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.200")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            var b = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.200")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            Assert.Equal(0, a.CompareTo(b));
+        }
+
+        [Fact]
+        public void CompareToNotEqual()
+        {
+            var a = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.200")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            var b = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.220")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            Assert.NotEqual(0, a.CompareTo(b));
+        }
+
+        [Fact]
+        public void GetAddressEnumerator()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.3")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.5"),
+                    End = IPAddress.Parse("10.1.1.5")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.7"),
+                    End = IPAddress.Parse("10.1.1.8")
+                }
+            };
+
+            var enumerator = ranges.GetAddressEnumerator();
+            Assert.NotNull(enumerator);
+        }
+
+        [Fact]
+        public void AddressEnumeratorCurrent()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.3")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.5"),
+                    End = IPAddress.Parse("10.1.1.5")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.7"),
+                    End = IPAddress.Parse("10.1.1.8")
+                }
+            };
+
+            var enumerator = ranges.GetAddressEnumerator();
+            Assert.Equal(IPAddress.Parse("10.1.1.1"), enumerator.Current);
+        }
+
+        [Fact]
+        public void AddressEnumeratorMoveNext()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.3")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.5"),
+                    End = IPAddress.Parse("10.1.1.5")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.7"),
+                    End = IPAddress.Parse("10.1.1.8")
+                }
+            };
+
+            var enumerator = ranges.GetAddressEnumerator();
+            Assert.Equal(IPAddress.Parse("10.1.1.1"), enumerator.Current);
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.2"), enumerator.Current);
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.3"), enumerator.Current);
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.5"), enumerator.Current);
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.7"), enumerator.Current);
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.8"), enumerator.Current);
+            Assert.False(enumerator.MoveNext());
+        }
+
+        [Fact]
+        public void AddressEnumeratorReset()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.3")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.5"),
+                    End = IPAddress.Parse("10.1.1.5")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.7"),
+                    End = IPAddress.Parse("10.1.1.8")
+                }
+            };
+
+            var enumerator = ranges.GetAddressEnumerator();
+            Assert.True(enumerator.MoveNext());
+            Assert.True(enumerator.MoveNext());
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.5"), enumerator.Current);
+            enumerator.Reset();
+            Assert.Equal(IPAddress.Parse("10.1.1.1"), enumerator.Current);
+        }
+
+        [Fact]
+        public void AddressEnumeratorMoveNextThrowsOnChange()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.3")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.5"),
+                    End = IPAddress.Parse("10.1.1.5")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.7"),
+                    End = IPAddress.Parse("10.1.1.8")
+                }
+            };
+
+            var enumerator = ranges.GetAddressEnumerator();
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.2"), enumerator.Current);
+            ranges[0].End = IPAddress.Parse("10.1.1.4");
+            Assert.Throws<InvalidOperationException>(() => enumerator.MoveNext());
+        }
+
+        [Fact]
+        public void AddressEnumeratorResetThrowsOnChange()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.3")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.5"),
+                    End = IPAddress.Parse("10.1.1.5")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.7"),
+                    End = IPAddress.Parse("10.1.1.8")
+                }
+            };
+
+            var enumerator = ranges.GetAddressEnumerator();
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.2"), enumerator.Current);
+            ranges[0].End = IPAddress.Parse("10.1.1.4");
+            Assert.Throws<InvalidOperationException>(() => enumerator.Reset());
+        }
+
+        [Fact]
+        public void AddressEnumeratorCurrentThrowsOnChange()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.3")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.5"),
+                    End = IPAddress.Parse("10.1.1.5")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.7"),
+                    End = IPAddress.Parse("10.1.1.8")
+                }
+            };
+
+            var enumerator = ranges.GetAddressEnumerator();
+            Assert.True(enumerator.MoveNext());
+            Assert.Equal(IPAddress.Parse("10.1.1.2"), enumerator.Current);
+            ranges[0].End = IPAddress.Parse("10.1.1.4");
+            Assert.Throws<InvalidOperationException>(() => { var x = enumerator.Current; } );
         }
     }
 }

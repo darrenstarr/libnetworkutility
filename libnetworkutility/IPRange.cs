@@ -1,13 +1,75 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
 namespace libnetworkutility
 {
-    public class IPRange
+    public class IPRange : IEnumerable<IPAddress>, IComparable<IPRange>
     {
+        public class Enumerator : IEnumerator<IPAddress>
+        {
+            private IPRange Parent { get; set; }
+            private long Position { get; set; } = 0;
+            private int Hash { get; set; }
+
+            internal Enumerator(IPRange parent)
+            {
+                Parent = parent;
+                Hash = Parent.GetHashCode();
+            }
+
+            public object Current
+            {
+                get
+                {
+                    // TODO : Figure out how to trigger this from a unit test
+                    if (Hash != Parent.GetHashCode())
+                        throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+
+                    return Parent.Start.Offset(Position);
+                }
+            }
+
+            IPAddress IEnumerator<IPAddress>.Current
+            {
+                get
+                {
+                    if (Hash != Parent.GetHashCode())
+                        throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+
+                    return Parent.Start.Offset(Position);
+                }
+            }
+
+            public void Dispose()
+            {
+            }
+
+            public bool MoveNext()
+            {
+                if (Hash != Parent.GetHashCode())
+                    throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+
+                if (Position >= (Parent.Count - 1))
+                    return false;
+
+                Position++;
+                return true;
+            }
+
+            public void Reset()
+            {
+                if (Hash != Parent.GetHashCode())
+                    throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+
+                Position = 0;
+            }
+        };
+
         public IPAddress Start { get; set; }
+
         public IPAddress End { get; set; }
 
         public IPRange()
@@ -224,6 +286,29 @@ namespace libnetworkutility
                 Start.LessThanOrEqual(other.Start) &&
                 End.GreaterThanOrEqual(other.End)
             );
+        }
+
+        public IEnumerator<IPAddress> GetEnumerator()
+        {
+            return new Enumerator(this);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return new Enumerator(this);
+        }
+
+        public int CompareTo(IPRange other)
+        {
+            if (Equals(other))
+                return 0;
+
+            if (Start.LessThan(other.Start))
+                return -1;
+            else if (Start.GreaterThan(other.Start))
+                return 1;
+
+            return -1;
         }
     }
 }

@@ -65,7 +65,7 @@ namespace libnetworkutility
             var themInt = them.ToUInt32();
             return meInt >= themInt;
         }
-        public static IPAddress Offset(this IPAddress me, int offset)
+        public static IPAddress Offset(this IPAddress me, long offset)
         {
             var meInt = me.ToUInt32();
             if (offset >= 0)
@@ -89,6 +89,11 @@ namespace libnetworkutility
                 return me;
 
             return other;
+        }
+
+        public static long Minus(this IPAddress me, IPAddress other)
+        {
+            return Convert.ToInt64(me.ToUInt32()) - Convert.ToInt64(other.ToUInt32());
         }
 
         public static IPAddress GetSourceIP(this IPAddress me)

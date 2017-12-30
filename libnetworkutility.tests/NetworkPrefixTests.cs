@@ -6,7 +6,7 @@ using Xunit;
 
 namespace libnetworkutility.tests
 {
-    public class NetworkPrefix
+    public class NetworkPrefixTests
     {
         [Fact]
         public void BaseNetwork()

@@ -140,7 +140,7 @@ namespace libnetworkutility
                 destination[i - index] = this[i];
         }
 
-        public int FindFirst(bool value)
+        public long FindFirst(bool value)
         {
             var wordFail = value ? ulong.MinValue : ulong.MaxValue;
             for(var i=0; i<(Count >> 6); i++)
@@ -191,7 +191,7 @@ namespace libnetworkutility
             return -1;
         }
 
-        public bool this[int key]
+        public bool this[long key]
         {
             get
             {
@@ -199,7 +199,7 @@ namespace libnetworkutility
                     throw new ArgumentOutOfRangeException("key must be a positive value less than " + Count.ToString());
 
                 var wordIndex = key >> 6;
-                var bitMask = (ulong)0x1 << (63 - (key & 0x3F));
+                var bitMask = (ulong)0x1 << Convert.ToInt32(63 - (key & 0x3F));
 
                 return (Bits[wordIndex] & bitMask) != 0;
             }
@@ -210,7 +210,7 @@ namespace libnetworkutility
                     throw new ArgumentOutOfRangeException("key must be a positive value less than " + Count.ToString());
 
                 var wordIndex = key >> 6;
-                var bitMask = (ulong)0x1 << (63 - (key & 0x3F));
+                var bitMask = (ulong)0x1 << Convert.ToInt32(63 - (key & 0x3F));
 
                 if (value)
                 {

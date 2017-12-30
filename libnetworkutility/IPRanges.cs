@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -6,8 +7,83 @@ using System.Text;
 
 namespace libnetworkutility
 {
-    public class IPRanges : List<IPRange>
+    public class IPRanges : List<IPRange>, IComparable<IPRanges>
     {
+        public class AddressEnumerator : IEnumerator<IPAddress>
+        {
+            private IPRanges Parent { get; set; }
+            private int Range { get; set; } = 0;
+            private IEnumerator<IPAddress> IPEnumerator { get; set; }
+            private int Hash { get; set; }
+
+            internal AddressEnumerator(IPRanges parent)
+            {
+                Parent = parent;
+                Hash = parent.GetHashCode();
+
+                IPEnumerator = Parent[Range].GetEnumerator();
+            }
+
+            public IPAddress Current
+            {
+                get
+                {
+                    if (Hash != Parent.GetHashCode())
+                        throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+
+                    return IPEnumerator.Current;
+                }
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    // TODO : Figure out how to trigger this from a unit test
+                    if (Hash != Parent.GetHashCode())
+                        throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+
+                    return IPEnumerator.Current;
+                }
+            }
+
+            public void Dispose()
+            {
+                IPEnumerator.Dispose();
+                IPEnumerator = null;
+            }
+
+            public bool MoveNext()
+            {
+                if (Hash != Parent.GetHashCode())
+                    throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+
+                if(!IPEnumerator.MoveNext())
+                {
+                    if (Range >= (Parent.Count - 1))
+                        return false;
+
+                    Range++;
+
+                    IPEnumerator.Dispose();
+                    IPEnumerator = Parent[Range].GetEnumerator();
+                }
+
+                return true;
+            }
+
+            public void Reset()
+            {
+                if (Hash != Parent.GetHashCode())
+                    throw new InvalidOperationException("The collection was modified after the enumerator was created.");
+
+                Dispose();
+
+                Range = 0;
+                IPEnumerator = Parent[Range].GetEnumerator();
+            }
+        }
+
         public IPRanges() : base()
         {
         }
@@ -219,6 +295,50 @@ namespace libnetworkutility
         {
             foreach (var item in ranges)
                 Remove(item);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is IPRanges)
+            {
+                var ranges = (IPRanges)obj;
+                if (ranges.Count != Count)
+                    return false;
+
+                for(var i=0; i<Count; i++)
+                {
+                    if (!ranges[i].Equals(this[i]))
+                        return false;
+                }
+
+                return true;
+            }
+            return false;
+        }
+
+        public override string ToString()
+        {
+            return string.Join(",", this.Select(x => x.ToString()));
+        }
+
+        public override int GetHashCode()
+        {
+            int result = 0x55555555;        // Seed the result
+
+            foreach (var range in this)
+                result ^= range.GetHashCode();
+
+            return result;
+        }
+
+        public int CompareTo(IPRanges other)
+        {
+            return Equals(other) ? 0 : -1;
+        }
+
+        public IEnumerator<IPAddress> GetAddressEnumerator()
+        {
+            return new AddressEnumerator(this);
         }
     }
 }
