@@ -24,6 +24,17 @@ namespace libnetworkutility
             }
         }
 
+        public IPAddress Broadcast
+        {
+            get
+            {
+                var x = Network.ToUInt32();
+                x &= 0xFFFFFFFF << (32 - Length);
+                x |= 0xFFFFFFFF >> Length;
+                return x.ToIPAddress();
+            }
+        }
+
         public override bool Equals(object obj)
         {
             var other = obj as NetworkPrefix;
