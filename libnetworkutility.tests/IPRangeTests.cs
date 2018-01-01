@@ -14,15 +14,15 @@ namespace libnetworkutility.tests
             var start = IPAddress.Parse("10.0.0.1");
             var end = IPAddress.Parse("10.0.0.255");
 
-            var x = new libnetworkutility.IPRange(start, end);
+            var x = new IPRange(start, end);
             Assert.Equal(start, x.Start);
             Assert.Equal(end, x.End);
             Assert.Equal(start.ToString() + "-" + end.ToString(), x.ToString());
 
-            Exception ex = Assert.Throws<ArgumentException>(() => new libnetworkutility.IPRange(end, start));
+            Exception ex = Assert.Throws<ArgumentException>(() => new IPRange(end, start));
             Assert.Equal("start must be less than or equal to end", ex.Message);
 
-            var y = new libnetworkutility.IPRange();
+            var y = new IPRange();
             Assert.Equal(IPAddress.Any, y.Start);
             Assert.Equal(IPAddress.Any, y.End);
         }
@@ -36,7 +36,7 @@ namespace libnetworkutility.tests
             var testWithin = IPAddress.Parse("10.0.0.125");
             var testWithout = IPAddress.Parse("10.1.1.1");
 
-            var x = new libnetworkutility.IPRange
+            var x = new IPRange
             {
                 Start = start,
                 End = end
@@ -49,13 +49,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void IntersectsRangeOverlapsOther()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.100")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.20"),
                 End = IPAddress.Parse("10.1.1.89")
@@ -67,13 +67,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void IntersectsOtherOverlapsRange()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.20"),
                 End = IPAddress.Parse("10.1.1.89")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.100")
@@ -85,13 +85,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void IntersectsRangeEqualsOther()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.20"),
                 End = IPAddress.Parse("10.1.1.89")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.20"),
                 End = IPAddress.Parse("10.1.1.89")
@@ -103,13 +103,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void IntersectsRangeIntoOther()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.89")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.20"),
                 End = IPAddress.Parse("10.1.1.100")
@@ -121,13 +121,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void IntersectsOtherIntoRange()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.20"),
                 End = IPAddress.Parse("10.1.1.100")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.89")
@@ -139,13 +139,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void IntersectsDoesntIntersect()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.20"),
                 End = IPAddress.Parse("10.1.1.100")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.10")
@@ -157,13 +157,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void RangeEquals()
         {
-            var x = new libnetworkutility.IPRange
+            var x = new IPRange
             {
                 Start = IPAddress.Parse("10.0.0.1"),
                 End = IPAddress.Parse("10.0.0.255")
             };
 
-            var good = new libnetworkutility.IPRange
+            var good = new IPRange
             {
                 Start = IPAddress.Parse("10.0.0.1"),
                 End = IPAddress.Parse("10.0.0.255")
@@ -171,7 +171,7 @@ namespace libnetworkutility.tests
 
             Assert.True(good.Equals(x));
 
-            var bad1 = new libnetworkutility.IPRange
+            var bad1 = new IPRange
             {
                 Start = IPAddress.Parse("10.0.0.1"),
                 End = IPAddress.Parse("10.0.0.254")
@@ -179,7 +179,7 @@ namespace libnetworkutility.tests
 
             Assert.False(bad1.Equals(x));
 
-            var bad2 = new libnetworkutility.IPRange
+            var bad2 = new IPRange
             {
                 Start = IPAddress.Parse("10.0.0.2"),
                 End = IPAddress.Parse("10.0.0.255")
@@ -205,7 +205,7 @@ namespace libnetworkutility.tests
         [Fact]
         public void HashCode()
         {
-            var x = new libnetworkutility.IPRange
+            var x = new IPRange
             {
                 Start = IPAddress.Parse("10.0.0.1"),
                 End = IPAddress.Parse("10.0.0.255")
@@ -316,13 +316,13 @@ namespace libnetworkutility.tests
         [Fact]
         void BordersNextTrue()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -334,13 +334,13 @@ namespace libnetworkutility.tests
         [Fact]
         void BordersNextFalseGap()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.101"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -352,13 +352,13 @@ namespace libnetworkutility.tests
         [Fact]
         void BordersPreviousTrue()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
@@ -370,13 +370,13 @@ namespace libnetworkutility.tests
         [Fact]
         void BordersPreviousFalseGap()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.102"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
@@ -388,13 +388,13 @@ namespace libnetworkutility.tests
         [Fact]
         void BordersTrueForward()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -406,13 +406,13 @@ namespace libnetworkutility.tests
         [Fact]
         void BordersTrueBack()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
@@ -442,13 +442,13 @@ namespace libnetworkutility.tests
         [Fact]
         void BordersFalseBack()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.102"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
@@ -460,19 +460,19 @@ namespace libnetworkutility.tests
         [Fact]
         public void CombineRangeEqualsOther()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var good = new libnetworkutility.IPRange
+            var good = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -484,19 +484,19 @@ namespace libnetworkutility.tests
         [Fact]
         public void CombineRangeEclipsesOther()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.200")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var good = new libnetworkutility.IPRange
+            var good = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.200")
@@ -508,19 +508,19 @@ namespace libnetworkutility.tests
         [Fact]
         public void CombineRangeEndToEndLowerFirst()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var good = new libnetworkutility.IPRange
+            var good = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -532,19 +532,19 @@ namespace libnetworkutility.tests
         [Fact]
         public void CombineRangeEndToEndUpperFirst()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.99")
             };
 
-            var good = new libnetworkutility.IPRange
+            var good = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -556,19 +556,19 @@ namespace libnetworkutility.tests
         [Fact]
         public void CombineRangeOverlappingLowerFirst()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.101")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var good = new libnetworkutility.IPRange
+            var good = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -580,19 +580,19 @@ namespace libnetworkutility.tests
         [Fact]
         public void CombineRangeOverlappingUpperFirst()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.101")
             };
 
-            var good = new libnetworkutility.IPRange
+            var good = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -604,13 +604,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void CombineRangeThrowsIfNotTouching()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.105"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.101")
@@ -623,7 +623,7 @@ namespace libnetworkutility.tests
         [Fact]
         public void CountEqualsAll()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("0.0.0.0"),
                 End = IPAddress.Parse("255.255.255.255")
@@ -635,7 +635,7 @@ namespace libnetworkutility.tests
         [Fact]
         public void CountOne()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.1")
@@ -647,7 +647,7 @@ namespace libnetworkutility.tests
         [Fact]
         public void CountOneHundred()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.100")
@@ -659,19 +659,19 @@ namespace libnetworkutility.tests
         [Fact]
         public void SubtractEclipse()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.100")
             };
 
-            var good = new libnetworkutility.IPRanges
+            var good = new IPRanges
             {
             };
 
@@ -681,19 +681,19 @@ namespace libnetworkutility.tests
         [Fact]
         public void SubtractEqual()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var good = new libnetworkutility.IPRanges
+            var good = new IPRanges
             {
             };
 
@@ -703,21 +703,21 @@ namespace libnetworkutility.tests
         [Fact]
         public void SubtractClipStartAligned()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.19")
             };
 
-            var good = new libnetworkutility.IPRanges
+            var good = new IPRanges
             {
-                new libnetworkutility.IPRange
+                new IPRange
                 {
                     Start = IPAddress.Parse("10.1.1.20"),
                     End = IPAddress.Parse("10.1.1.80")
@@ -730,21 +730,21 @@ namespace libnetworkutility.tests
         [Fact]
         public void SubtractClipStartUnaligned()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.19")
             };
 
-            var good = new libnetworkutility.IPRanges
+            var good = new IPRanges
             {
-                new libnetworkutility.IPRange
+                new IPRange
                 {
                     Start = IPAddress.Parse("10.1.1.20"),
                     End = IPAddress.Parse("10.1.1.80")
@@ -757,21 +757,21 @@ namespace libnetworkutility.tests
         [Fact]
         public void SubtractClipEndAligned()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.61"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var good = new libnetworkutility.IPRanges
+            var good = new IPRanges
             {
-                new libnetworkutility.IPRange
+                new IPRange
                 {
                     Start = IPAddress.Parse("10.1.1.10"),
                     End = IPAddress.Parse("10.1.1.60")
@@ -784,21 +784,21 @@ namespace libnetworkutility.tests
         [Fact]
         public void SubtractClipEndUnaligned()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.61"),
                 End = IPAddress.Parse("10.1.1.85")
             };
 
-            var good = new libnetworkutility.IPRanges
+            var good = new IPRanges
             {
-                new libnetworkutility.IPRange
+                new IPRange
                 {
                     Start = IPAddress.Parse("10.1.1.10"),
                     End = IPAddress.Parse("10.1.1.60")
@@ -811,21 +811,21 @@ namespace libnetworkutility.tests
         [Fact]
         public void SubtractNone()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.82"),
                 End = IPAddress.Parse("10.1.1.85")
             };
 
-            var good = new libnetworkutility.IPRanges
+            var good = new IPRanges
             {
-                new libnetworkutility.IPRange
+                new IPRange
                 {
                     Start = IPAddress.Parse("10.1.1.10"),
                     End = IPAddress.Parse("10.1.1.80")
@@ -838,26 +838,26 @@ namespace libnetworkutility.tests
         [Fact]
         public void SubtractMiddle()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.10"),
                 End = IPAddress.Parse("10.1.1.80")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.20"),
                 End = IPAddress.Parse("10.1.1.59")
             };
 
-            var good = new libnetworkutility.IPRanges
+            var good = new IPRanges
             {
-                new libnetworkutility.IPRange
+                new IPRange
                 {
                     Start = IPAddress.Parse("10.1.1.10"),
                     End = IPAddress.Parse("10.1.1.19")
                 },
-                new libnetworkutility.IPRange
+                new IPRange
                 {
                     Start = IPAddress.Parse("10.1.1.60"),
                     End = IPAddress.Parse("10.1.1.80")
@@ -870,13 +870,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void ComesBeforeNoOverlap()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.200"),
                 End = IPAddress.Parse("10.1.1.255")
@@ -889,13 +889,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void ComesBeforeOverlap()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.201")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.200"),
                 End = IPAddress.Parse("10.1.1.255")
@@ -908,13 +908,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void ComesAfterNoOverlap()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.200"),
                 End = IPAddress.Parse("10.1.1.255")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.199")
@@ -927,13 +927,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void ComesAfterOverlap()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.200"),
                 End = IPAddress.Parse("10.1.1.255")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.203")
@@ -946,13 +946,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void EclipsesEqual()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.200")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.200")
@@ -964,13 +964,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void EclipsesAtStart()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.200")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.200")
@@ -982,13 +982,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void EclipsesEqualAtEnd()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.255")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.200")
@@ -1000,13 +1000,13 @@ namespace libnetworkutility.tests
         [Fact]
         public void EclipsesBothSides()
         {
-            var range = new libnetworkutility.IPRange
+            var range = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.1"),
                 End = IPAddress.Parse("10.1.1.255")
             };
 
-            var other = new libnetworkutility.IPRange
+            var other = new IPRange
             {
                 Start = IPAddress.Parse("10.1.1.100"),
                 End = IPAddress.Parse("10.1.1.200")

@@ -170,6 +170,12 @@ namespace libnetworkutility
             });
         }
 
+        public void Add(List<IPAddress> addresses)
+        {
+            foreach (var address in addresses)
+                Add(address);
+        }
+
         /// <summary>
         /// Remove an address from the range list
         /// </summary>
@@ -222,6 +228,12 @@ namespace libnetworkutility
                     range.Start = (addressInt + 1).ToIPAddress();
                 }
             }
+        }
+
+        public void Remove(List<IPAddress> addresses)
+        {
+            foreach (var address in addresses)
+                Remove(address);
         }
 
         public new void Add(IPRange range)
