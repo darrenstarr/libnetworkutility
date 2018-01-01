@@ -1715,5 +1715,55 @@ namespace libnetworkutility.tests
 
             Assert.NotEqual(ranges, clone);
         }
+
+        [Fact]
+        public void Contains()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.200")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            Assert.True(ranges.Contains(IPAddress.Parse("10.1.1.220")));
+        }
+
+        [Fact]
+        public void DoesNotContain()
+        {
+            var ranges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.1"),
+                    End = IPAddress.Parse("10.1.1.10")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.50"),
+                    End = IPAddress.Parse("10.1.1.200")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.1.210"),
+                    End = IPAddress.Parse("10.1.1.255")
+                }
+            };
+
+            Assert.False(ranges.Contains(IPAddress.Parse("10.1.1.205")));
+        }
     }
 }

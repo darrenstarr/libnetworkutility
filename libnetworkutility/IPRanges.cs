@@ -352,5 +352,15 @@ namespace libnetworkutility
         {
             return new AddressEnumerator(this);
         }
+
+        public bool Contains(IPAddress address)
+        {
+            foreach(var range in this)
+            {
+                if (range.Contains(address))
+                    return true;
+            }
+            return false;
+        }
     }
 }
