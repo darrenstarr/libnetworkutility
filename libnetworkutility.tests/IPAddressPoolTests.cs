@@ -569,5 +569,87 @@ namespace libnetworkutility.tests
             Assert.Equal(IPAddress.Parse("10.1.2.3"), pool.ReserveNextAddress());
             Assert.Null(pool.ReserveNextAddress());
         }
+
+
+        [Fact]
+        public void ReservedAddressRangesMultiple()
+        {
+            var pool = new IPAddressPool(NetworkPrefix.Parse("10.1.2.0/23"));
+
+            var reserveRanges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.55"),
+                    End = IPAddress.Parse("10.1.2.60")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.160"),
+                    End = IPAddress.Parse("10.1.2.165")
+                }
+            };
+
+            pool.Reserve(reserveRanges);
+
+            var good = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.55"),
+                    End = IPAddress.Parse("10.1.2.60")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.160"),
+                    End = IPAddress.Parse("10.1.2.165")
+                }
+            };
+
+            Assert.Equal(good, pool.ReservedAddressRanges);
+        }
+
+        [Fact]
+        public void UnreservedAddressRangesMultiple()
+        {
+            var pool = new IPAddressPool(NetworkPrefix.Parse("10.1.2.0/23"));
+
+            var reserveRanges = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.55"),
+                    End = IPAddress.Parse("10.1.2.60")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.160"),
+                    End = IPAddress.Parse("10.1.2.165")
+                }
+            };
+
+            pool.Reserve(reserveRanges);
+
+            var good = new IPRanges
+            {
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.0"),
+                    End = IPAddress.Parse("10.1.2.54")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.61"),
+                    End = IPAddress.Parse("10.1.2.159")
+                },
+                new IPRange
+                {
+                    Start = IPAddress.Parse("10.1.2.166"),
+                    End = IPAddress.Parse("10.1.3.255")
+                }
+            };
+
+            Assert.Equal(good, pool.UnreservedAddressRanges);
+        }
     }
 }

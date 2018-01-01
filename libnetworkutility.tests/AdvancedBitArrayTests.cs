@@ -341,5 +341,223 @@ namespace libnetworkutility.tests
             bits[0] = true;
             Assert.Equal(0, bits.FindFirst(true));
         }
+
+        [Fact]
+        public void FindFirstZeroFromIndex()
+        {
+            var bits = new AdvancedBitArray(1000);
+            bits.SetAll();
+            Assert.Equal(-1, bits.FindFirst(false, 500));
+
+            bits[999] = false;
+            Assert.Equal(999, bits.FindFirst(false, 750));
+
+            bits[501] = false;
+            Assert.Equal(501, bits.FindFirst(false, 500));
+
+            bits[100] = false;
+            Assert.Equal(100, bits.FindFirst(false, 75));
+            Assert.Equal(100, bits.FindFirst(false, 64));
+
+            bits[62] = false;
+            Assert.Equal(62, bits.FindFirst(false, 0));
+
+            bits[0] = false;
+            Assert.Equal(0, bits.FindFirst(false, 0));
+        }
+
+        [Fact]
+        public void FindFirstOneFromIndex()
+        {
+            var bits = new AdvancedBitArray(1000);
+            Assert.Equal(-1, bits.FindFirst(true, 500));
+
+            bits[999] = true;
+            Assert.Equal(999, bits.FindFirst(true, 750));
+
+            bits[501] = true;
+            Assert.Equal(501, bits.FindFirst(true, 500));
+
+            bits[100] = true;
+            Assert.Equal(100, bits.FindFirst(true, 75));
+            Assert.Equal(100, bits.FindFirst(true, 64));
+
+            bits[62] = true;
+            Assert.Equal(62, bits.FindFirst(true, 0));
+
+            bits[0] = true;
+            Assert.Equal(0, bits.FindFirst(true, 0));
+        }
+
+        [Fact]
+        public void FirstFirstFromIndexThrowsOnIndexTooLow()
+        {
+            var bits = new AdvancedBitArray(1000);
+            Assert.Throws<ArgumentOutOfRangeException>(() => bits.FindFirst(true, -1));
+        }
+
+        [Fact]
+        public void FirstFirstFromIndexThrowsOnIndexTooHigh()
+        {
+            var bits = new AdvancedBitArray(1000);
+            Assert.Throws<ArgumentOutOfRangeException>(() => bits.FindFirst(true, 2000));
+        }
+
+        [Fact]
+        public void SetRangesNone()
+        {
+            var bits = new AdvancedBitArray(1000);
+
+            var good = new List<AdvancedBitArray.LongRange>();
+
+            Assert.Equal(good, bits.SetRanges);
+        }
+
+        [Fact]
+        public void SetRangesOne()
+        {
+            var bits = new AdvancedBitArray(1000);
+            bits[500] = true;
+
+            var good = new List<AdvancedBitArray.LongRange>
+            {
+                new AdvancedBitArray.LongRange
+                {
+                    Start = 500,
+                    End = 500
+                }
+            };
+
+            Assert.Equal(good, bits.SetRanges);
+        }
+
+        [Fact]
+        public void SetRangesMultipleRanges()
+        {
+            var bits = new AdvancedBitArray(1000);
+            for (var i = 10; i <= 100; i++)
+                bits[i] = true;
+            for (var i = 200; i <= 299; i++)
+                bits[i] = true;
+
+            var good = new List<AdvancedBitArray.LongRange>
+            {
+                new AdvancedBitArray.LongRange
+                {
+                    Start = 10,
+                    End = 100
+                },
+                new AdvancedBitArray.LongRange
+                {
+                    Start = 200,
+                    End = 299
+                }
+            };
+
+            Assert.Equal(good, bits.SetRanges);
+        }
+
+        [Fact]
+        public void UnsetRangesNone()
+        {
+            var bits = new AdvancedBitArray(1000);
+            bits.SetAll();
+
+            var good = new List<AdvancedBitArray.LongRange>();
+
+            Assert.Equal(good, bits.UnsetRanges);
+        }
+
+        [Fact]
+        public void UnsetRangesOne()
+        {
+            var bits = new AdvancedBitArray(1000);
+            bits[500] = true;
+
+            var good = new List<AdvancedBitArray.LongRange>
+            {
+                new AdvancedBitArray.LongRange
+                {
+                    Start = 0,
+                    End = 499
+                },
+                new AdvancedBitArray.LongRange
+                {
+                    Start = 501,
+                    End = 999
+                }
+            };
+
+            Assert.Equal(good, bits.UnsetRanges);
+        }
+
+        [Fact]
+        public void UnsetRangesMultipleRanges()
+        {
+            var bits = new AdvancedBitArray(1000);
+            for (var i = 10; i <= 100; i++)
+                bits[i] = true;
+            for (var i = 200; i <= 299; i++)
+                bits[i] = true;
+
+            var good = new List<AdvancedBitArray.LongRange>
+            {
+                new AdvancedBitArray.LongRange
+                {
+                    Start = 0,
+                    End = 9
+                },
+                new AdvancedBitArray.LongRange
+                {
+                    Start = 101,
+                    End = 199
+                },
+                new AdvancedBitArray.LongRange
+                {
+                    Start = 300,
+                    End = 999
+                }
+            };
+
+            Assert.Equal(good, bits.UnsetRanges);
+        }
+
+        [Fact]
+        public void LongRangeHashCode()
+        {
+            var a = new AdvancedBitArray.LongRange
+            {
+                Start = 0,
+                End = 1000
+            };
+
+            var b = new AdvancedBitArray.LongRange
+            {
+                Start = 0,
+                End = 1000
+            };
+
+            Assert.Equal(a.GetHashCode(), b.GetHashCode());
+
+            var c = new AdvancedBitArray.LongRange
+            {
+                Start = 1,
+                End = 1000
+            };
+
+            Assert.NotEqual(a.GetHashCode(), c.GetHashCode());
+        }
+
+        [Fact]
+        public void LongRangeToString()
+        {
+            var range = new AdvancedBitArray.LongRange
+            {
+                Start = 1,
+                End = 1000
+            };
+
+            Assert.Equal("1-1000", range.ToString());
+        }
     }
 }

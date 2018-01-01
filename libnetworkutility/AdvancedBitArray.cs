@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace libnetworkutility
@@ -142,8 +143,45 @@ namespace libnetworkutility
 
         public long FindFirst(bool value)
         {
+            return FindFirst(value, 0);
+        }
+
+        public long FindFirst(bool value, long start)
+        {
+            if (start < 0 || start >= Count)
+                throw new ArgumentOutOfRangeException("start is not within the index range");
+
+            long firstWord = start >> 6;
+
+            var firstBitOffset = Convert.ToInt32(start & 0x3F);
+            if(firstBitOffset != 0)
+            {
+                var x = Bits[firstWord];
+
+                x <<= firstBitOffset;
+
+                if (value)
+                {
+                    for (var k = firstBitOffset; k < 64; k++, x <<= 1)
+                    {
+                        if ((x & ((ulong)1 << 63)) != 0)
+                            return (firstWord << 6) + k;
+                    }
+                }
+                else
+                {
+                    for (var k = firstBitOffset; k < 64; k++, x <<= 1)
+                    {
+                        if ((x & ((ulong)1 << 63)) == 0)
+                            return (firstWord << 6) + k;
+                    }
+                }
+
+                firstWord++;
+            }
+
             var wordFail = value ? ulong.MinValue : ulong.MaxValue;
-            for(var i=0; i<(Count >> 6); i++)
+            for (var i = firstWord; i < (Count >> 6); i++)
             {
                 var x = Bits[i];
                 if (x == wordFail)
@@ -159,7 +197,7 @@ namespace libnetworkutility
                 }
                 else
                 {
-                    for (var k = 0; k < 64; k++, x<<=1)
+                    for (var k = 0; k < 64; k++, x <<= 1)
                     {
                         if ((x & ((ulong)1 << 63)) == 0)
                             return (i << 6) + k;
@@ -189,6 +227,101 @@ namespace libnetworkutility
             }
 
             return -1;
+        }
+
+        public class LongRange 
+        {
+            public LongRange()
+            {
+            }
+
+            public long Start { get; set; }
+            public long End { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                var range = obj as LongRange;
+                return range != null &&
+                       Start == range.Start &&
+                       End == range.End;
+            }
+
+            public override int GetHashCode()
+            {
+                var hashCode = -1676728671;
+                hashCode = hashCode * -1521134295 + Start.GetHashCode();
+                hashCode = hashCode * -1521134295 + End.GetHashCode();
+                return hashCode;
+            }
+
+            public override string ToString()
+            {
+                return Start.ToString() + "-" + End.ToString();
+            }
+        }
+
+        public List<LongRange> SetRanges
+        {
+            get
+            {
+                var result = new List<LongRange>();
+
+                var index = FindFirst(true);
+                if (index == -1)
+                    return result;
+
+                while (index < Count)
+                {
+                    var nextStart = FindFirst(!this[index], index);
+                    if (nextStart == -1)
+                        nextStart = Count;
+
+                    if (this[index])
+                    {
+                        result.Add(new LongRange
+                        {
+                            Start = index,
+                            End = nextStart - 1
+                        });
+                    }
+
+                    index = nextStart;
+                }
+
+                return result;
+            }
+        }
+
+        public List<LongRange> UnsetRanges
+        {
+            get
+            {
+                var result = new List<LongRange>();
+
+                var index = FindFirst(false);
+                if (index == -1)
+                    return result;
+
+                while (index < Count)
+                {
+                    var nextStart = FindFirst(!this[index], index);
+                    if (nextStart == -1)
+                        nextStart = Count;
+
+                    if (!this[index])
+                    {
+                        result.Add(new LongRange
+                        {
+                            Start = index,
+                            End = nextStart - 1
+                        });
+                    }
+
+                    index = nextStart;
+                }
+
+                return result;
+            }
         }
 
         public bool this[long key]

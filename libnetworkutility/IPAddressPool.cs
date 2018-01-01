@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -219,6 +220,46 @@ namespace libnetworkutility
             }
 
             return null;
+        }
+
+        public IPRanges ReservedAddressRanges
+        {
+            get
+            {
+                var longRanges = ReservedAddresses.SetRanges;
+                return new IPRanges(
+                    longRanges
+                        .Select(x =>
+                            new IPRange
+                            {
+                                Start = FirstAddress.Offset(x.Start),
+                                End = FirstAddress.Offset(x.End)
+                            }
+                        )
+                        .ToList(),
+                    false
+                );
+            }
+        }
+
+        public IPRanges UnreservedAddressRanges
+        {
+            get
+            {
+                var longRanges = ReservedAddresses.UnsetRanges;
+                return new IPRanges(
+                    longRanges
+                        .Select(x =>
+                            new IPRange
+                            {
+                                Start = FirstAddress.Offset(x.Start),
+                                End = FirstAddress.Offset(x.End)
+                            }
+                        )
+                        .ToList(),
+                    false
+                );
+            }
         }
     }
 }
