@@ -164,6 +164,18 @@ namespace libnetworkutility.tests
         }
 
         [Fact]
+        public void ParseHigh()
+        {
+            var good = new NetworkPrefix
+            {
+                Network = IPAddress.Parse("10.11.12.253"),
+                Length = 30
+            };
+
+            Assert.Equal(good, NetworkPrefix.Parse("10.11.12.253/30"));
+        }
+
+        [Fact]
         public void SubnetMask()
         {
             Assert.Equal(IPAddress.Parse("255.255.255.0"), NetworkPrefix.Parse("10.100.1.0/24").SubnetMask);

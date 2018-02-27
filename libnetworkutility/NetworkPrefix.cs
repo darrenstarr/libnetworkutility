@@ -92,7 +92,7 @@ namespace libnetworkutility
             }
         }
 
-        static Regex ipv4PrefixExpression = new Regex(@"^\s*(?<ip>(((1?[0-9]{1,2})|(2([0-4][0-9])|(5[0-5])))\.){3}((1?[0-9]{1,2})|(2([0-4][0-9])|(5[0-5]))))\/(?<length>(3[0-2])|([0-2]?[0-9]))\s*$", RegexOptions.Compiled);
+        static Regex ipv4PrefixExpression = new Regex(@"^\s*(?<ip>(((1?[0-9]{1,2})|(2([0-4][0-9])|(5[0-5])))\.){3}((1?[0-9]{1,2})|(2(([0-4][0-9])|(5[0-5])))))\/(?<length>(3[0-2])|([0-2]?[0-9]))\s*$", RegexOptions.Compiled);
         public static NetworkPrefix Parse(string text)
         {
             var m = ipv4PrefixExpression.Match(text);
